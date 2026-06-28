@@ -1,0 +1,8 @@
+{
+  "name": "com.premk.ludo-core",
+  "version": "0.1.0",
+  "displayName": "Ludo Core",
+  "description": "Engine-agnostic Ludo rules, board geometry and AI. Shared source consumed by the .NET test/sim projects AND the Unity client (embedded as a local package).",
+  "unity": "2021.3",
+  "author": { "name": "premk" }
+}

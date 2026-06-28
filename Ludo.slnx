@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Ludo.Core/Ludo.Core.csproj" />
+    <Project Path="src/Ludo.Sim/Ludo.Sim.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Ludo.Tests/Ludo.Tests.csproj" />
+  </Folder>
+</Solution>

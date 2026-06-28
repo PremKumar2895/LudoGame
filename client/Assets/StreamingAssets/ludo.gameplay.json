@@ -1,0 +1,23 @@
+{
+  "_note": "Secrets-free gameplay tunables bundled with the client. Service IDs live in per-SDK settings, not here.",
+  "maxPlayers": 10,
+  "tokensPerSeat": 4,
+  "ringCellsPerArm": 13,
+  "unlockRolls": [6],
+  "homeEntryOffset": 50,
+  "homeColumnLen": 6,
+  "safeStarOffset": 8,
+  "exactFinish": true,
+  "bonusOnSix": true,
+  "bonusOnCapture": true,
+  "bonusOnHome": true,
+  "threeSixCancels": true,
+  "blocksEnabled": true,
+  "blockBlocksPassage": true,
+  "teamSharedTurns": true,
+  "teamBlocks": false,
+  "autoMoveSingle": true,
+  "turnTimeoutSec": 60,
+  "turnWarnSec": 10,
+  "pitySixEnabled": false
+}

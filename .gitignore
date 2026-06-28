@@ -1,0 +1,42 @@
+# ---- .NET ----
+bin/
+obj/
+*.user
+*.suo
+.vs/
+
+# ---- Node (docx/tooling) ----
+node_modules/
+
+# ---- Unity (added at the Unity phase; scope these under the Unity folder later) ----
+[Ll]ibrary/
+[Tt]emp/
+[Mm]emoryCaptures/
+[Uu]ser[Ss]ettings/
+# NOTE: do NOT blanket-ignore *.csproj here — our .NET engine projects are real source.
+
+# ---- Secrets (NEVER pushed) ----
+# Real filled-in config stays local only; the committed reference is ludo.config.example.json
+config/ludo.config.json
+config/ludo.config.local.json
+*.keystore
+*.p12
+google-services.json
+GoogleService-Info.plist
+
+# ---- .NET artifacts (relocated output) ----
+/artifacts/
+
+# ---- Unity project (client/) generated files ----
+client/[Ll]ibrary/
+client/[Tt]emp/
+client/[Ll]ogs/
+client/[Uu]ser[Ss]ettings/
+client/[Bb]uild/
+client/*.csproj
+client/*.sln
+
+# ---- OS / Office temp ----
+~$*
+Thumbs.db
+.DS_Store

@@ -1,0 +1,12 @@
+<Project>
+  <!--
+    Relocate all bin/obj output to /artifacts so source folders stay clean.
+    This matters because src/Ludo.Core is ALSO consumed by Unity as a local package —
+    stray compiled DLLs in its folder would clash with Unity's own compilation.
+    Uses the .NET 8+ "artifacts output" layout.
+  -->
+  <PropertyGroup>
+    <UseArtifactsOutput>true</UseArtifactsOutput>
+    <ArtifactsPath>$(MSBuildThisFileDirectory)artifacts</ArtifactsPath>
+  </PropertyGroup>
+</Project>

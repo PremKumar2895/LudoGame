@@ -1,0 +1,63 @@
+{
+  "_README": "TEMPLATE / REFERENCE ONLY (safe to commit). Copy this to config/ludo.config.json and fill in real IDs. The real config/ludo.config.json is git-ignored and never pushed.",
+
+  "app": {
+    "name": "Ludo Royale",
+    "version": "0.1.0",
+    "environment": "development",
+    "defaultLanguage": "en",
+    "supportedLanguages": ["en", "hi"]
+  },
+
+  "build": {
+    "androidPackageId": "com.premk.ludoroyale",
+    "iosBundleId": "com.premk.ludoroyale",
+    "minAndroidSdk": 26,
+    "minIosVersion": "13.0"
+  },
+
+  "gameplay": {
+    "maxPlayers": 10,
+    "tokensPerSeat": 4,
+    "ringCellsPerArm": 13,
+    "unlockRolls": [6],
+    "homeEntryOffset": 50,
+    "homeColumnLen": 6,
+    "safeStarOffset": 8,
+    "exactFinish": true,
+    "bonusOnSix": true,
+    "bonusOnCapture": true,
+    "bonusOnHome": true,
+    "threeSixCancels": true,
+    "blocksEnabled": true,
+    "blockBlocksPassage": true,
+    "teamSharedTurns": true,
+    "teamBlocks": false,
+    "autoMoveSingle": true,
+    "turnTimeoutSec": 60,
+    "turnWarnSec": 10,
+    "pitySixEnabled": false
+  },
+
+  "services": {
+    "_note": "All blank = offline mode. Provide an ID to light up that service.",
+    "photon": { "fusionAppId": "", "voiceAppId": "", "fixedRegion": "" },
+    "firebase": {
+      "apiKey": "", "projectId": "", "appIdAndroid": "", "appIdIos": "",
+      "messagingSenderId": "", "storageBucket": "", "authDomain": ""
+    },
+    "agora": {
+      "_note": "appId is client-safe; appCertificate is SERVER-ONLY (never ship it in the app).",
+      "appId": "", "appCertificate": ""
+    },
+    "googleSignIn": { "webClientId": "", "androidClientId": "", "iosClientId": "" },
+    "sentry": { "dsn": "" }
+  },
+
+  "featureFlags": {
+    "onlineMultiplayer": false,
+    "voiceChat": false,
+    "cloudAccounts": false,
+    "crashReporting": false
+  }
+}
