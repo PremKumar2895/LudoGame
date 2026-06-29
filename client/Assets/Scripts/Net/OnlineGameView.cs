@@ -25,6 +25,8 @@ namespace LudoGame.Net
         private readonly Dictionary<int, int[]> _shown = new Dictionary<int, int[]>(); // seat -> displayed progress per token
         private sbyte _diceFace = -1;
         private float _rollSettleAt;
+        private bool _finished;
+        private string _winnerMsg = "";
 
         private void Awake() { _cfg = GameplayConfigLoader.Load(); }
 
@@ -74,6 +76,7 @@ namespace LudoGame.Net
             {
                 _diceFace = snap.LastRoll;
                 _rollSettleAt = Time.unscaledTime + 0.45f;
+                if (!_firstRender) Sfx.Roll();
             }
 
             foreach (var ss in snap.Seats)
@@ -98,8 +101,17 @@ namespace LudoGame.Net
                     else if (now != shown[t])
                     {
                         arr[t].StopAllCoroutines();
-                        if (now < shown[t]) arr[t].StartCoroutine(arr[t].ToBaseRoutine(_layout));   // captured → knockback home
-                        else arr[t].StartCoroutine(arr[t].MoveRoutine(_layout, shown[t], now));     // advanced → hop (handles unlock)
+                        if (now < shown[t])
+                        {
+                            Vfx.Burst(arr[t].transform.position, BoardColors.For(ss.BoardPos), 1.1f); // capture flash
+                            Sfx.Capture();
+                            arr[t].StartCoroutine(arr[t].ToBaseRoutine(_layout));                     // captured → knockback home
+                        }
+                        else
+                        {
+                            if (ss.BoardPos == _session.LocalSeat) Sfx.Move();
+                            arr[t].StartCoroutine(arr[t].MoveRoutine(_layout, shown[t], now));         // advanced → hop (handles unlock)
+                        }
                     }
                     shown[t] = now;
                 }
@@ -116,6 +128,16 @@ namespace LudoGame.Net
                 : myTurn
                     ? (snap.Sub == (byte)TurnSub.AwaitingRoll ? "Your turn — TAP to roll" : "TAP a highlighted token")
                     : $"Seat {snap.CurrentSeat} is playing…";
+
+            if (snap.Phase == (byte)MatchPhase.Finished && !_finished)
+            {
+                _finished = true;
+                Vfx.Confetti(_layout.Center, 24);
+                Sfx.Win();
+                _winnerMsg = snap.Mode == (byte)GameMode.Teams
+                    ? $"Team {(char)('A' + Mathf.Max(0, (int)snap.WinningTeam))} wins!"
+                    : (snap.FinishOrder.Count > 0 ? $"Seat {snap.FinishOrder[0]} wins!" : "Game over!");
+            }
         }
 
         private void HandleInput()
@@ -182,6 +204,19 @@ namespace LudoGame.Net
                 GUI.Box(new Rect(272, 70, 64, 64), face.ToString(), new GUIStyle(GUI.skin.box) { fontSize = 28, fontStyle = FontStyle.Bold });
             }
 
+            if (_finished)
+            {
+                const float w = 360f, h = 86f;
+                float x = (UIScale.Width - w) * 0.5f, y = UIScale.Height * 0.30f;
+                var prev = GUI.color;
+                GUI.color = new Color(0.12f, 0.12f, 0.14f, 0.92f);
+                GUI.Box(new Rect(x, y, w, h), GUIContent.none);
+                GUI.color = prev;
+                var bs = new GUIStyle(GUI.skin.label) { fontSize = 30, fontStyle = FontStyle.Bold, alignment = TextAnchor.MiddleCenter };
+                bs.normal.textColor = new Color(1f, 0.86f, 0.30f);
+                GUI.Label(new Rect(x, y, w, h), _winnerMsg, bs);
+            }
+
             DrawRoster();
         }
 
@@ -211,7 +246,9 @@ namespace LudoGame.Net
                 if (cur) { GUI.color = Color.white; GUI.Box(new Rect(sx - 2, sy - 2, cw + 4, ch + 4), GUIContent.none); }
 
                 GUI.color = done ? BoardColors.Light(col, 0.6f) : (cur ? col : BoardColors.Light(col, 0.25f));
-                string who = ss.IsBot ? "Bot" : "P" + ss.BoardPos;
+                string nm = _session != null ? _session.SeatName(ss.BoardPos) : null;
+                string who = !string.IsNullOrEmpty(nm) ? nm : (ss.IsBot ? "Bot" : "P" + ss.BoardPos);
+                if (who.Length > 9) who = who.Substring(0, 8) + "…";
                 string sub = done ? $"#{ss.FinishRank + 1}" : (teamMode ? "Team " + (char)('A' + ss.TeamId) : "");
                 GUI.Box(new Rect(sx, sy, cw, ch), $"{who}\n{sub}", chip);
 

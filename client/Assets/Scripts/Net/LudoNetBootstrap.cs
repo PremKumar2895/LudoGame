@@ -28,6 +28,7 @@ namespace LudoGame.Net
 
             LudoNetSession.StartPlayers = players;
             LudoNetSession.StartTeams = teams;
+            LudoNetSession.LocalName = PlayerProfile.Name;
 
             _runner = GetComponent<NetworkRunner>();
             if (_runner == null) _runner = gameObject.AddComponent<NetworkRunner>();
@@ -58,8 +59,10 @@ namespace LudoGame.Net
         private void OnGUI()
         {
             UIScale.Apply();
-            GUILayout.BeginArea(new Rect(12, 12, 270, 235), GUI.skin.box);
+            GUILayout.BeginArea(new Rect(12, 12, 270, 270), GUI.skin.box);
             GUILayout.Label("Ludo Royale — Online (Fusion)");
+            GUILayout.Label("Your name:");
+            PlayerProfile.Name = GUILayout.TextField(PlayerProfile.Name);
             GUILayout.Label("Room code:");
             _room = GUILayout.TextField(_room);
 

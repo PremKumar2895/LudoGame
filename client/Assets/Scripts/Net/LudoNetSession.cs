@@ -37,9 +37,16 @@ namespace LudoGame.Net
         private bool _wasConnected = true;
         private float _lastRttCheck;
 
+        // player names
+        public static string LocalName = "Player";
+        private readonly Dictionary<PlayerRef, string> _names = new Dictionary<PlayerRef, string>(); // host: player → name
+        private readonly Dictionary<int, string> _seatNames = new Dictionary<int, string>();          // all: seat → name
+        public string SeatName(int boardPos) => _seatNames.TryGetValue(boardPos, out var n) ? n : null;
+
         public override void Spawned()
         {
             Instance = this;
+            RPC_SubmitName(Runner.LocalPlayer, LocalName); // tell the host who we are
 
             if (Object.HasStateAuthority)
             {
@@ -104,7 +111,9 @@ namespace LudoGame.Net
             _playerSeats[player] = seat.BoardPos;
             _server.OnSeatChanged(seat.BoardPos); // refresh timer so the new human isn't instantly timed out
             RPC_AssignSeat(player, seat.BoardPos);
-            Notify($"Player joined — seat {seat.BoardPos}", NoticeKind.Success);
+            string nm = _names.TryGetValue(player, out var pn) ? pn : "P" + seat.BoardPos;
+            RPC_SeatName(seat.BoardPos, nm);
+            Notify($"{nm} joined — seat {seat.BoardPos}", NoticeKind.Success);
         }
 
         private LudoCore.Seat FindSeat(int boardPos)
@@ -118,6 +127,17 @@ namespace LudoGame.Net
         {
             if (player == Runner.LocalPlayer) LocalSeat = seat;
         }
+
+        // ---- player names ----
+        [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+        private void RPC_SubmitName(PlayerRef player, string name)
+        {
+            _names[player] = name;
+            if (_playerSeats.TryGetValue(player, out var pos)) RPC_SeatName(pos, name); // late name → re-broadcast
+        }
+
+        [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+        private void RPC_SeatName(int seat, string name) => _seatNames[seat] = name;
 
         // ---- notifications (host broadcasts; everyone shows a toast) ----
         private void Notify(string msg, NoticeKind kind)
