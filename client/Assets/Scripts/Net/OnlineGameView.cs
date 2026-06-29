@@ -3,6 +3,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Ludo.Core;
+using LudoGame.UI;
 
 namespace LudoGame.Net
 {
@@ -39,6 +40,7 @@ namespace LudoGame.Net
                 }
                 return;
             }
+            if (_built && (_lastScreen.x != Screen.width || _lastScreen.y != Screen.height)) FrameCamera();
             HandleInput();
         }
 
@@ -138,6 +140,8 @@ namespace LudoGame.Net
             }
         }
 
+        private Vector2Int _lastScreen;
+
         private void SetupCamera()
         {
             _cam = Camera.main;
@@ -147,14 +151,26 @@ namespace LudoGame.Net
                 _cam = go.AddComponent<Camera>();
             }
             _cam.orthographic = true;
-            _cam.orthographicSize = _layout.RingRadius * 1.55f;
             _cam.transform.position = new Vector3(0, 0, -10);
             _cam.clearFlags = CameraClearFlags.SolidColor;
             _cam.backgroundColor = BoardColors.Background;
+            FrameCamera();
+        }
+
+        // Size the orthographic view so the whole board fits on ANY aspect — portrait phone,
+        // tablet, or desktop. Vertical half-extent = orthoSize; horizontal = orthoSize * aspect.
+        private void FrameCamera()
+        {
+            if (_cam == null || _layout == null) return;
+            float half = _layout.ViewHalfExtent * 1.12f;             // board extent + margin for HUD/roster
+            float aspect = (float)Screen.width / Mathf.Max(1, Screen.height);
+            _cam.orthographicSize = half / Mathf.Min(1f, aspect);    // fit width on portrait, height on landscape
+            _lastScreen = new Vector2Int(Screen.width, Screen.height);
         }
 
         private void OnGUI()
         {
+            UIScale.Apply();
             var title = new GUIStyle(GUI.skin.label) { fontSize = 18, fontStyle = FontStyle.Bold };
             GUI.Label(new Rect(272, 12, 700, 26), _session != null ? $"Online — you are seat {_session.LocalSeat}" : "Online", title);
             GUI.Label(new Rect(272, 40, 700, 26), _msg, new GUIStyle(GUI.skin.label) { fontSize = 16 });
@@ -177,8 +193,8 @@ namespace LudoGame.Net
             int n = _last.Seats.Count;
             const float cw = 60f, ch = 38f, gap = 6f;
             float total = n * cw + (n - 1) * gap;
-            float sx = Mathf.Max(8f, (Screen.width - total) * 0.5f);
-            float sy = Screen.height - ch - 10f;
+            float sx = Mathf.Max(8f, (UIScale.Width - total) * 0.5f);
+            float sy = UIScale.Height - ch - 10f;
 
             var chip = new GUIStyle(GUI.skin.box) { fontSize = 11, fontStyle = FontStyle.Bold, alignment = TextAnchor.MiddleCenter };
             chip.normal.textColor = BoardColors.Outline;

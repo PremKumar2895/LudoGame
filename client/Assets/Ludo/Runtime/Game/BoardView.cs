@@ -20,7 +20,7 @@ namespace LudoGame
             for (int s = 0; s < geo.SeatCount; s++)
             {
                 Color col = BoardColors.For(s);
-                Spawn(root, "basepad" + s, layout.Ring(geo.StartIndex(s)) * 1.28f, BoardColors.Light(col, 0.62f), cs * 2.7f, 0);
+                Spawn(root, "basepad" + s, layout.BasePad(s), BoardColors.Light(col, 0.62f), cs * 2.7f, 0);
                 for (int d = 0; d < geo.HomeColumnLen; d++)
                     Spawn(root, $"home{s}.{d}", layout.HomeCell(s, d), BoardColors.Light(col, 0.32f), cs * 0.72f, 1);
             }

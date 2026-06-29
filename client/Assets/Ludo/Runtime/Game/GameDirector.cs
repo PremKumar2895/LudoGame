@@ -76,7 +76,7 @@ namespace LudoGame
                 _cam = go.AddComponent<Camera>();
             }
             _cam.orthographic = true;
-            _cam.orthographicSize = _layout.RingRadius * 1.55f;
+            _cam.orthographicSize = _layout.ViewHalfExtent;
             _cam.transform.position = new Vector3(0, 0, -10);
             _cam.clearFlags = CameraClearFlags.SolidColor;
             _cam.backgroundColor = BoardColors.Background;

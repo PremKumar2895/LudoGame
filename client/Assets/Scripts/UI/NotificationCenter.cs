@@ -54,12 +54,13 @@ namespace LudoGame.UI
         private void OnGUI()
         {
             if (_toasts.Count == 0) return;
+            UIScale.Apply();
             if (_label == null)
                 _label = new GUIStyle(GUI.skin.label)
                 { fontSize = 13, alignment = TextAnchor.MiddleLeft, wordWrap = true, padding = new RectOffset(2, 2, 2, 2) };
 
             const float w = 300f, h = 42f, gap = 8f;
-            float x = Screen.width - w - 14f;
+            float x = UIScale.Width - w - 14f;
             float y = 14f;
 
             for (int i = _toasts.Count - 1; i >= 0; i--) // newest on top
